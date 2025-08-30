@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>💙 Forgiveness Lane 3D 💙</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Comic Sans MS", cursive;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      text-align: center;
+      overflow: hidden;
+      height: 100vh;
+      perspective: 1000px;
+    }
+
+    /* Floating hearts background */
+    .hearts-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .heart {
+      position: absolute;
+      color: rgba(255, 182, 193, 0.3);
+      font-size: 20px;
+      animation: floatHeart 8s infinite linear;
+    }
+
+    @keyframes floatHeart {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Modal styling */
+    .modal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotateX(0deg);
+      background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+      backdrop-filter: blur(20px);
+      padding: 40px 50px;
+      border-radius: 25px;
+      box-shadow: 
+        0 25px 50px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+      max-width: 450px;
+      border: 1px solid rgba(255,255,255,0.3);
+      animation: modalEnter 0.8s ease-out;
+    }
+
+    @keyframes modalEnter {
+      0% {
+        transform: translate(-50%, -50%) rotateX(-15deg) scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: translate(-50%, -50%) rotateX(0deg) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal h1 {
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .modal p {
+      color: #333;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Game area with 3D perspective */
+    #game-area {
+      position: relative;
+      margin: 20px auto;
+      width: 500px;
+      height: 600px;
+      background: linear-gradient(180deg, #87CEEB 0%, #98FB98 100%);
+      border-radius: 20px;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      box-shadow: 
+        0 20px 40px rgba(0,0,0,0.3),
+        inset 0 0 50px rgba(255,255,255,0.1);
+      animation: gameAreaPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes gameAreaPulse {
+      0%, 100% {
+        box-shadow: 
+          0 20px 40px rgba(0,0,0,0.3),
+          inset 0 0 50px rgba(255,255,255,0.1);
+      }
+      50% {
+        box-shadow: 
+          0 25px 50px rgba(116, 185, 255, 0.4),
+          inset 0 0 60px rgba(255,255,255,0.2);
+      }
+    }
+
+    /* Road lanes with 3D effect */
+    #game-area::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, 
+        transparent 0%, 
+        #fff 10%, 
+        transparent 20%,
+        #fff 30%,
+        transparent 40%,
+        #fff 50%,
+        transparent 60%,
+        #fff 70%,
+        transparent 80%,
+        #fff 90%,
+        transparent 100%
+      );
+      transform: translateX(-50%);
+      animation: roadMoving 1s linear infinite;
+    }
+
+    @keyframes roadMoving {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 40px; }
+    }
+
+    #scoreboard {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-size: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+      backdrop-filter: blur(10px);
+      padding: 10px 15px;
+      border-radius: 15px;
+      font-weight: bold;
+      color: #333;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      transform: translateZ(10px);
+    }
+
+    /* Enhanced player with 3D effects */
+    #player {
+      position: absolute;
+      bottom: 30px;
+      width: 90px;
+      height: 90px;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      transform-style: preserve-3d;
+      box-shadow: 
+        0 10px 20px rgba(0,0,0,0.3),
+        0 0 30px rgba(116, 185, 255, 0.4);
+      border-radius: 15px;
+      animation: playerFloat 2s ease-in-out infinite;
+      overflow: hidden;
+    }
+
+    #player img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+    }
+
+    @keyframes playerFloat {
+      0%, 100% {
+        transform: translateY(0px) rotateY(0deg);
+        box-shadow: 
+          0 10px 20px rgba(0,0,0,0.3),
+          inset 0 0 20px rgba(255,255,255,0.3);
+      }
+      50% {
+        transform: translateY(-10px) rotateY(5deg);
+        box-shadow: 
+          0 15px 30px rgba(0,0,0,0.4),
+          inset 0 0 25px rgba(255,255,255,0.4);
+      }
+    }
+
+    @keyframes playerRotate {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+
+    /* Enhanced falling objects */
+    .falling {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 15px;
+      animation: fall3D linear;
+      transform-style: preserve-3d;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .falling img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+    }
+
+    .falling.good {
+      animation: fall3D linear, goodPulse 1s ease-in-out infinite;
+    }
+
+    .falling.bad {
+      animation: fall3D linear, badPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes fall3D {
+      0% { 
+        top: -100px; 
+        transform: rotateX(0deg) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% { 
+        top: 620px; 
+        transform: rotateX(360deg) scale(0.8);
+        opacity: 0;
+      }
+    }
+
+    @keyframes goodPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes badPulse {
+      0%, 100% { transform: scale(1) rotateZ(0deg); }
+      50% { transform: scale(1.2) rotateZ(5deg); }
+    }
+
+    /* Enhanced controls */
+    #controls {
+      margin-top: 30px;
+      perspective: 1000px;
+    }
+
+    #controls button, .modal button {
+      font-size: 18px;
+      padding: 15px 30px;
+      margin: 10px;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(45deg, #74b9ff, #0984e3);
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      transform: translateZ(0);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #controls button::before, .modal button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.6s;
+    }
+
+    #controls button:hover, .modal button:hover {
+      transform: translateY(-5px) rotateX(15deg);
+      box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+      background: linear-gradient(45deg, #0984e3, #74b9ff);
+    }
+
+    #controls button:hover::before, .modal button:hover::before {
+      left: 100%;
+    }
+
+    #controls button:active, .modal button:active {
+      transform: translateY(-2px) rotateX(5deg);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Particle effects */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particle 2s linear infinite;
+    }
+
+    @keyframes particle {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-200px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* Glow effects */
+    .glow {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.5); opacity: 0.1; }
+    }
+
+    /* Success animation */
+    .success-burst {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .burst-particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ffd700;
+      border-radius: 50%;
+      animation: burst 0.8s ease-out forwards;
+    }
+
+    @keyframes burst {
+      0% {
+        transform: scale(0) translate(0, 0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1) translate(var(--tx), var(--ty));
+        opacity: 0;
+      }
+    }
+
+    /* Enhanced end screen */
+    #end-screen h2 {
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.8em;
+      margin-bottom: 25px;
+      animation: textShimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes textShimmer {
+      0%, 100% { filter: hue-rotate(0deg); }
+      50% { filter: hue-rotate(90deg); }
+    }
+
+    /* Responsive design */
+    @media (max-width: 600px) {
+      #game-area {
+        width: 90vw;
+        max-width: 400px;
+        height: 500px;
+      }
+      
+      .modal {
+        max-width: 90vw;
+        padding: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating hearts background -->
+  <div class="hearts-bg" id="hearts-bg"></div>
+
+  <!-- Start Modal -->
+  <div id="start-screen" class="modal">
+    <h1>💙 Forgiveness Lane 3D 💙</h1>
+    <p>My dear Sakshi, I really want your forgiveness.<br>
+       But since you're mad 😔, I demand a challenge:<br>
+       If you want to stay mad at me, you must beat this game at least once!<br>
+       Otherwise, forgive me 💙</p>
+    <p><strong>Collect 50 Forgiveness Tokens to win!</strong></p>
+    <button id="start-btn">Start Game ✨</button>
+  </div>
+
+  <!-- Game Area (hidden at start) -->
+  <div id="game-area" class="hidden">
+    <div id="scoreboard">Forgiveness Tokens: 0 / 25</div>
+    <img id="player" src="assets/character.gif">
+  </div>
+
+  <!-- Controls (hidden at start) -->
+  <div id="controls" class="hidden">
+    <button id="left-btn">⬅️ Left</button>
+    <button id="right-btn">➡️ Right</button>
+    <p style="color: white; margin-top: 10px; font-size: 14px;">Use arrow keys or buttons to move</p>
+  </div>
+
+  <!-- End Modal -->
+  <div id="end-screen" class="modal hidden">
+    <h2 id="end-message"></h2>
+    <div id="end-buttons"></div>
+  </div>
+
+  <script>
+    // Game variables
+    const gameArea = document.getElementById("game-area");
+    const playerEl = document.getElementById("player");
+    const scoreboard = document.getElementById("scoreboard");
+
+    const lanes = [100, 320];
+    let playerLane = 0;
+    let score = 0;
+    const WIN_SCORE = 25;
+    let gameRunning = false;
+    let spawnInterval;
+
+    const goodImgs = ["assets/good1.gif"];
+    const badImgs = ["assets/bad1.gif"];
+
+    // Create floating hearts background
+    function createFloatingHearts() {
+      const heartsContainer = document.getElementById('hearts-bg');
+      
+      setInterval(() => {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.textContent = '💙';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 2 + 's';
+        heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+        heartsContainer.appendChild(heart);
+
+        setTimeout(() => {
+          if (heart.parentNode) {
+            heart.remove();
+          }
+        }, 10000);
+      }, 800);
+    }
+
+    // Create particles effect
+    function createParticles(x, y, color = '#ffd700') {
+      for (let i = 0; i < 8; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.background = color;
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        particle.style.animationDelay = (i * 0.1) + 's';
+        
+        const angle = (i / 8) * Math.PI * 2;
+        const distance = 50 + Math.random() * 50;
+        particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+        particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+        
+        gameArea.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 2000);
+      }
+    }
+
+    // Create success burst effect
+    function createSuccessBurst() {
+      const burst = document.createElement('div');
+      burst.className = 'success-burst';
+      
+      for (let i = 0; i < 12; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'burst-particle';
+        
+        const angle = (i / 12) * Math.PI * 2;
+        const distance = 100 + Math.random() * 100;
+        particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+        particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+        particle.style.animationDelay = (i * 0.05) + 's';
+        
+        burst.appendChild(particle);
+      }
+      
+      gameArea.appendChild(burst);
+      setTimeout(() => burst.remove(), 1000);
+    }
+
+    function startGame() {
+      document.getElementById("start-screen").classList.add("hidden");
+      document.getElementById("end-screen").classList.add("hidden");
+      document.getElementById("game-area").classList.remove("hidden");
+      document.getElementById("controls").classList.remove("hidden");
+
+      score = 0;
+      updateScore();
+      playerLane = 0;
+      playerEl.style.left = lanes[playerLane] + "px";
+
+      document.querySelectorAll(".falling").forEach(el => el.remove());
+
+      gameRunning = true;
+      spawnInterval = setInterval(spawnObjects, 1500);
+    }
+
+    function endGame(won) {
+      gameRunning = false;
+      clearInterval(spawnInterval);
+      document.getElementById("controls").classList.add("hidden");
+
+      const endScreen = document.getElementById("end-screen");
+      const endMessage = document.getElementById("end-message");
+      const endButtons = document.getElementById("end-buttons");
+
+      endButtons.innerHTML = "";
+      endScreen.classList.remove("hidden");
+
+      if (won) {
+        createSuccessBurst();
+        endMessage.innerHTML = "You've Won 🙌<br>But You collected too many Forgiveness Tokens!<br>So Now you HAVE to forgive me";
+        let forgiveBtn = document.createElement("button");
+        forgiveBtn.innerHTML = "Forgive Me 💙";
+        forgiveBtn.onclick = () => {
+          alert("Thank you 😊💖");
+          createSuccessBurst();
+        };
+        endButtons.appendChild(forgiveBtn);
+      } else {
+        endMessage.innerHTML = "You lost! <br>But remember our deal, you can either play again or forgive me";
+        let retryBtn = document.createElement("button");
+        retryBtn.innerHTML = "Play Again 🔄";
+        retryBtn.onclick = startGame;
+
+        let forgiveBtn = document.createElement("button");
+        forgiveBtn.innerHTML = "Forgive Me 💙";
+        forgiveBtn.onclick = () => {
+          alert("Thank you 😊💖");
+          createSuccessBurst();
+        };
+
+        endButtons.appendChild(retryBtn);
+        endButtons.appendChild(forgiveBtn);
+      }
+    }
+
+    function updateScore() {
+      scoreboard.innerHTML = `Forgiveness Tokens: ${score} / ${WIN_SCORE}`;
+      if (score > 0) {
+        scoreboard.style.animation = 'none';
+        setTimeout(() => {
+          scoreboard.style.animation = 'modalEnter 0.3s ease-out';
+        }, 10);
+      }
+    }
+
+    function spawnObjects() {
+      if (!gameRunning) return;
+
+      let pattern = Math.random();
+      let lanesToSpawn = [];
+
+      if (pattern < 0.4) { 
+        lanesToSpawn.push({ lane: Math.floor(Math.random()*2), type: "good" });
+      } else if (pattern < 0.6) { 
+        lanesToSpawn.push({ lane: 0, type: "good" });
+        lanesToSpawn.push({ lane: 1, type: "bad" });
+        if (Math.random() < 0.5) lanesToSpawn.reverse();
+      } else { 
+        lanesToSpawn.push({ lane: Math.floor(Math.random()*2), type: "bad" });
+      }
+
+      lanesToSpawn.forEach(obj => createFalling(obj.type, obj.lane));
+    }
+
+    function createFalling(type, lane) {
+      let el = document.createElement("img");
+      el.src = (type === "good") 
+        ? goodImgs[Math.floor(Math.random()*goodImgs.length)]
+        : badImgs[Math.floor(Math.random()*badImgs.length)];
+      el.classList.add("falling", type);
+      el.style.left = lanes[lane] + "px";
+      el.style.animationDuration = "3s";
+      gameArea.appendChild(el);
+
+      let check = setInterval(() => {
+        if (!gameRunning) { 
+          clearInterval(check); 
+          el.remove(); 
+          return; 
+        }
+        
+        const rect1 = playerEl.getBoundingClientRect();
+        const rect2 = el.getBoundingClientRect();
+
+        if (!(rect1.right < rect2.left || rect1.left > rect2.right ||
+              rect1.bottom < rect2.top || rect1.top > rect2.bottom)) {
+          
+          const centerX = rect2.left + rect2.width / 2;
+          const centerY = rect2.top + rect2.height / 2;
+          
+          if (type === "good") {
+            score++;
+            updateScore();
+            createParticles(centerX - gameArea.offsetLeft, centerY - gameArea.offsetTop, '#ffd700');
+            if (score >= WIN_SCORE) endGame(true);
+          } else {
+            createParticles(centerX - gameArea.offsetLeft, centerY - gameArea.offsetTop, '#ff6b6b');
+            endGame(false);
+          }
+          
+          el.remove();
+          clearInterval(check);
+        }
+      }, 50);
+
+      el.addEventListener("animationend", () => el.remove());
+    }
+
+    function moveLeft() {
+      if (!gameRunning) return;
+      playerLane = 0;
+      playerEl.style.left = lanes[playerLane] + "px";
+      playerEl.style.transform = "rotateY(-15deg)";
+      setTimeout(() => {
+        playerEl.style.transform = "rotateY(0deg)";
+      }, 200);
+    }
+
+    function moveRight() {
+      if (!gameRunning) return;
+      playerLane = 1;
+      playerEl.style.left = lanes[playerLane] + "px";
+      playerEl.style.transform = "rotateY(15deg)";
+      setTimeout(() => {
+        playerEl.style.transform = "rotateY(0deg)";
+      }, 200);
+    }
+
+    // Event listeners
+    document.getElementById("start-btn").addEventListener("click", startGame);
+    document.getElementById("left-btn").addEventListener("click", moveLeft);
+    document.getElementById("right-btn").addEventListener("click", moveRight);
+
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "ArrowLeft") moveLeft();
+      if (e.code === "ArrowRight") moveRight();
+      if (e.code === "Space") e.preventDefault();
+    });
+
+    // Initialize floating hearts
+    createFloatingHearts();
+
+    // Add some ambient sounds simulation with visual feedback
+    function createAmbientEffect() {
+      setInterval(() => {
+        if (gameRunning) {
+          const gameAreaRect = gameArea.getBoundingClientRect();
+          const x = Math.random() * gameAreaRect.width;
+          const y = Math.random() * gameAreaRect.height;
+          
+          const sparkle = document.createElement('div');
+          sparkle.style.position = 'absolute';
+          sparkle.style.left = x + 'px';
+          sparkle.style.top = y + 'px';
+          sparkle.style.width = '3px';
+          sparkle.style.height = '3px';
+          sparkle.style.background = '#fff';
+          sparkle.style.borderRadius = '50%';
+          sparkle.style.animation = 'particle 1.5s linear forwards';
+          sparkle.style.pointerEvents = 'none';
+          
+          gameArea.appendChild(sparkle);
+          setTimeout(() => sparkle.remove(), 1500);
+        }
+      }, 2000);
+    }
+
+    createAmbientEffect();
+  </script>
+</body>
+</html>

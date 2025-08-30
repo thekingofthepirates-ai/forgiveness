@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>💙 Earning Your Forgiveness 💙</title>
   <style>
     * {
@@ -17,6 +18,10 @@
       overflow: hidden;
       height: 100vh;
       perspective: 1000px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     /* Floating hearts background */
@@ -104,7 +109,7 @@
       display: none;
     }
 
-    /* Game area with 3D perspective */
+    /* Game area with 3D perspective - mobile optimized */
     #game-area {
       position: relative;
       margin: 20px auto;
@@ -118,6 +123,7 @@
         0 20px 40px rgba(0,0,0,0.3),
         inset 0 0 50px rgba(255,255,255,0.1);
       animation: gameAreaPulse 4s ease-in-out infinite;
+      touch-action: none; /* Prevent scrolling on touch */
     }
 
     @keyframes gameAreaPulse {
@@ -299,6 +305,7 @@
       transform: translateZ(0);
       position: relative;
       overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
 
     #controls button::before, .modal button::before {
@@ -409,17 +416,164 @@
       50% { filter: hue-rotate(90deg); }
     }
 
-    /* Responsive design */
-    @media (max-width: 600px) {
+    /* Enhanced responsive design for mobile */
+    @media (max-width: 768px) {
+      body {
+        height: 100vh;
+        overflow: hidden;
+        font-size: 14px;
+      }
+
       #game-area {
-        width: 90vw;
-        max-width: 400px;
-        height: 500px;
+        width: 95vw;
+        max-width: none;
+        height: 60vh;
+        min-height: 400px;
+        margin: 10px auto;
       }
       
       .modal {
         max-width: 90vw;
-        padding: 30px;
+        padding: 25px 20px;
+        margin: 0 5vw;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .modal h1 {
+        font-size: 2em;
+        margin-bottom: 15px;
+      }
+
+      .modal p {
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+
+      #scoreboard {
+        font-size: 14px;
+        padding: 8px 12px;
+        top: 10px;
+        left: 10px;
+      }
+
+      #player {
+        width: 70px;
+        height: 70px;
+        bottom: 20px;
+      }
+
+      .falling {
+        width: 60px;
+        height: 60px;
+      }
+
+      #controls {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 0 10px;
+      }
+
+      #controls button, .modal button {
+        font-size: 16px;
+        padding: 12px 20px;
+        margin: 5px;
+        flex: 1;
+        max-width: 120px;
+      }
+
+      #controls p {
+        font-size: 12px;
+        margin-top: 8px;
+      }
+
+      #end-screen h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+      }
+
+      #end-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #end-buttons button {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        font-size: 12px;
+      }
+
+      #game-area {
+        height: 55vh;
+        min-height: 350px;
+      }
+
+      .modal {
+        padding: 20px 15px;
+      }
+
+      .modal h1 {
+        font-size: 1.8em;
+      }
+
+      .modal p {
+        font-size: 13px;
+      }
+
+      #player {
+        width: 60px;
+        height: 60px;
+      }
+
+      .falling {
+        width: 50px;
+        height: 50px;
+      }
+
+      #controls button, .modal button {
+        font-size: 14px;
+        padding: 10px 15px;
+      }
+
+      #scoreboard {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+    }
+
+    /* Landscape orientation on mobile */
+    @media (max-height: 500px) and (orientation: landscape) {
+      #game-area {
+        height: 70vh;
+        width: 80vw;
+        max-width: 600px;
+      }
+
+      .modal {
+        max-height: 70vh;
+        padding: 15px;
+      }
+
+      .modal h1 {
+        font-size: 1.6em;
+        margin-bottom: 10px;
+      }
+
+      .modal p {
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+
+      #controls {
+        margin-top: 5px;
       }
     }
   </style>
@@ -432,10 +586,10 @@
   <div id="start-screen" class="modal">
     <h1>💙 Forgiveness Lane 3D 💙</h1>
     <p>My dear Sakshi, I really want your forgiveness.<br>
-       But since you're mad 😔, I demand a challenge:<br>
+       But since you're mad 😤, I demand a challenge:<br>
        If you want to stay mad at me, you must beat this game at least once!<br>
        Otherwise, forgive me 💙</p>
-    <p><strong>Collect 50 Forgiveness Tokens to win!</strong></p>
+    <p><strong>Collect 25 Forgiveness Tokens to win!</strong></p>
     <button id="start-btn">Start Game ✨</button>
   </div>
 
@@ -449,7 +603,7 @@
   <div id="controls" class="hidden">
     <button id="left-btn">⬅️ Left</button>
     <button id="right-btn">➡️ Right</button>
-    <p style="color: white; margin-top: 10px; font-size: 14px;">Use arrow keys or buttons to move</p>
+    <p style="color: white; margin-top: 10px; font-size: 14px;">Use arrow keys, buttons, or swipe to move</p>
   </div>
 
   <!-- End Modal -->
@@ -459,12 +613,12 @@
   </div>
 
   <script>
-    // Game variables
+    // Game variables with mobile-optimized lane positions
     const gameArea = document.getElementById("game-area");
     const playerEl = document.getElementById("player");
     const scoreboard = document.getElementById("scoreboard");
 
-    const lanes = [100, 320];
+    let lanes = [100, 320]; // Default for desktop
     let playerLane = 0;
     let score = 0;
     const WIN_SCORE = 25;
@@ -473,6 +627,29 @@
 
     const goodImgs = ["assets/good1.gif"];
     const badImgs = ["assets/bad1.gif"];
+
+    // Adjust lane positions based on screen size
+    function adjustLanes() {
+      const gameAreaWidth = gameArea.offsetWidth;
+      const playerWidth = window.innerWidth <= 768 ? 70 : 90; // Responsive player width
+      const margin = 40;
+      
+      if (window.innerWidth <= 768) {
+        // Mobile layout
+        lanes = [
+          margin,
+          gameAreaWidth - playerWidth - margin
+        ];
+      } else {
+        // Desktop layout
+        lanes = [100, 320];
+      }
+      
+      // Update player position if game is running
+      if (gameRunning) {
+        playerEl.style.left = lanes[playerLane] + "px";
+      }
+    }
 
     // Create floating hearts background
     function createFloatingHearts() {
@@ -543,6 +720,9 @@
       document.getElementById("end-screen").classList.add("hidden");
       document.getElementById("game-area").classList.remove("hidden");
       document.getElementById("controls").classList.remove("hidden");
+
+      // Adjust lanes for current screen size
+      adjustLanes();
 
       score = 0;
       updateScore();
@@ -702,6 +882,48 @@
     // Initialize floating hearts
     createFloatingHearts();
 
+    // Initialize lane positions
+    adjustLanes();
+
+    // Adjust lanes on window resize
+    window.addEventListener('resize', () => {
+      adjustLanes();
+    });
+
+    // Add touch event listeners for mobile
+    let touchStartX = 0;
+    
+    gameArea.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      touchStartX = e.touches[0].clientX;
+    });
+
+    gameArea.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      if (!gameRunning) return;
+      
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchEndX - touchStartX;
+      
+      if (Math.abs(diff) > 30) { // Minimum swipe distance
+        if (diff > 0) {
+          moveRight();
+        } else {
+          moveLeft();
+        }
+      }
+    });
+
+    // Prevent zoom on double tap
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
     // Add some ambient sounds simulation with visual feedback
     function createAmbientEffect() {
       setInterval(() => {
@@ -730,5 +952,4 @@
     createAmbientEffect();
   </script>
 </body>
-
 </html>
